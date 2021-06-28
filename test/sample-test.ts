@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import {BigNumber} from "ethers";
 import {ethers} from "hardhat";
 
 describe("Greeter", function () {
@@ -19,9 +20,16 @@ describe("Greeter", function () {
 });
 
 describe("TodoList", function () {
-  it("Should not return the value taskCount", async function () {
+  it("First task should have the right properties", async function () {
     const TodoListFactory = await ethers.getContractFactory("TodoList");
     const TodoList = await TodoListFactory.deploy();
     await TodoList.deployed();
+
+    expect(await TodoList.taskCount()).to.be.equal("1");
+    const tasks: Array<any> = await TodoList.tasks(1);
+
+    expect(<BigNumber>tasks[0].toNumber()).to.equal(1);
+    expect(tasks[1]).to.equal("First task");
+    expect(tasks[2]).to.be.false;
   });
 });
