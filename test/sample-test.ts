@@ -1,5 +1,5 @@
-import {expect} from "chai";
-import {BigNumber} from "ethers";
+import {expect, assert} from "chai";
+import {BigNumber, Contract} from "ethers";
 import {ethers} from "hardhat";
 
 describe("Greeter", function () {
@@ -19,12 +19,25 @@ describe("Greeter", function () {
   });
 });
 
-describe("TodoList", function () {
-  it("First task should have the right properties", async function () {
-    const TodoListFactory = await ethers.getContractFactory("TodoList");
-    const TodoList = await TodoListFactory.deploy();
-    await TodoList.deployed();
+describe("TodoList", async function () {
+  const TodoListFactory = await ethers.getContractFactory("TodoList");
+  let TodoList: Contract;
+  //
 
+  beforeEach(async function () {
+    TodoList = await TodoListFactory.deploy();
+    await TodoList.deployed();
+  });
+
+  it("Was deployed succesfully", async function () {
+    const {address} = TodoList;
+    assert.notEqual(address, "0x0");
+    assert.notEqual(address, "");
+    assert.notEqual(address, null);
+    assert.notEqual(address, undefined);
+  });
+
+  it("First task should have the right properties", async function () {
     expect(await TodoList.taskCount()).to.be.equal("1");
     const tasks: Array<any> = await TodoList.tasks(1);
 
