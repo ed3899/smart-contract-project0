@@ -20,10 +20,15 @@ describe("Greeter", function () {
   });
 });
 
-describe("TodoList", async function () {
-  const TodoListFactory = await ethers.getContractFactory("TodoList");
-  let TodoList = await TodoListFactory.deploy();
-  await TodoList.deployed();
+describe("TodoList", function () {
+  let TodoListFactory;
+  let TodoList: Contract;
+
+  this.beforeEach(async function () {
+    TodoListFactory = await ethers.getContractFactory("TodoList");
+    TodoList = await TodoListFactory.deploy();
+    await TodoList.deployed();
+  });
 
   it("Was deployed succesfully", async function () {
     const {address} = TodoList;
