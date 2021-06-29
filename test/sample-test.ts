@@ -1,6 +1,7 @@
 import {expect, assert} from "chai";
 import {BigNumber, Contract} from "ethers";
-import {ethers} from "hardhat";
+import {ethers, waffle} from "hardhat";
+const {loadFixture, deployContract} = waffle;
 
 describe("Greeter", function () {
   it("Should return the new greeting once it's changed", async function () {
@@ -21,13 +22,8 @@ describe("Greeter", function () {
 
 describe("TodoList", async function () {
   const TodoListFactory = await ethers.getContractFactory("TodoList");
-  let TodoList: Contract;
-  //
-
-  beforeEach(async function () {
-    TodoList = await TodoListFactory.deploy();
-    await TodoList.deployed();
-  });
+  let TodoList = await TodoListFactory.deploy();
+  await TodoList.deployed();
 
   it("Was deployed succesfully", async function () {
     const {address} = TodoList;
