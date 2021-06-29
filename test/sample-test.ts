@@ -1,7 +1,11 @@
 import {expect, assert} from "chai";
-import {BigNumber, Contract} from "ethers";
+import {MockProvider} from "ethereum-waffle";
+import {BigNumber, Contract, Wallet} from "ethers";
 import {ethers, waffle} from "hardhat";
 const {loadFixture, deployContract} = waffle;
+
+//Contract ABI
+import * as TodoListABI from "../artifacts/contracts/TodoList.sol/TodoList.json";
 
 describe("Greeter", function () {
   it("Should return the new greeting once it's changed", async function () {
@@ -21,17 +25,22 @@ describe("Greeter", function () {
 });
 
 describe("TodoList", function () {
-  let TodoListFactory;
-  let TodoList: Contract;
+  //Fixtures
+  async function fixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+    const signers = await ethers.getSigners();
+    let token: Contract = await deployContract(signers[0], TodoListABI);
+    return {token};
+  }
 
-  this.beforeEach(async function () {
-    TodoListFactory = await ethers.getContractFactory("TodoList");
-    TodoList = await TodoListFactory.deploy();
-    await TodoList.deployed();
-  });
+  // this.beforeEach(async function () {
+  //   // TodoListFactory = await ethers.getContractFactory("TodoList");
+  //   // TodoList = await TodoListFactory.deploy();
+  //   // await TodoList.deployed();
+  // });
 
   it("Was deployed succesfully", async function () {
-    const {address} = TodoList;
+    const {token} = await loadFixture(fixture);
+    const {address} = token;
     assert.notEqual(address, "0x0");
     assert.notEqual(address, "");
     assert.notEqual(address, null);
@@ -39,8 +48,9 @@ describe("TodoList", function () {
   });
 
   it("First task should have the right properties", async function () {
-    expect(await TodoList.taskCount()).to.be.equal("1");
-    const tasks: Array<any> = await TodoList.tasks(1);
+    const {token} = await loadFixture(fixture);
+    expect(await token.taskCount()).to.be.equal("1");
+    const tasks: Array<any> = await token.tasks(1);
 
     expect(<BigNumber>tasks[0].toNumber()).to.equal(1);
     expect(tasks[1]).to.equal("First task");
