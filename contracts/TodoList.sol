@@ -10,6 +10,8 @@ contract TodoList {
     }
     mapping(uint256 => Task) public tasks;
 
+    event TaskCreated(uint256 id, string content, bool completed);
+
     constructor() {
         createTask("First task");
     }
@@ -21,5 +23,7 @@ contract TodoList {
             content: _content,
             completed: false
         });
+        Task memory newTask = tasks[taskCount];
+        emit TaskCreated(newTask.id, newTask.content, newTask.completed);
     }
 }

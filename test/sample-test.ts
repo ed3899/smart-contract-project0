@@ -1,6 +1,6 @@
 import {expect, assert} from "chai";
 import {MockProvider} from "ethereum-waffle";
-import {BigNumber, Contract, Wallet} from "ethers";
+import {BigNumber, Contract, ContractFactory, Wallet} from "ethers";
 import {ethers, waffle} from "hardhat";
 const {loadFixture, deployContract} = waffle;
 
@@ -24,7 +24,7 @@ describe("Greeter", function () {
   });
 });
 
-describe("TodoList", function () {
+describe.only("TodoList", function () {
   //Fixtures
   async function fixture(_wallets: Wallet[], _mockProvider: MockProvider) {
     const signers = await ethers.getSigners();
@@ -49,11 +49,21 @@ describe("TodoList", function () {
 
   it("First task should have the right properties", async function () {
     const {token} = await loadFixture(fixture);
-    expect(await token.taskCount()).to.be.equal("1");
+    const taskCount = await token.taskCount();
+
+    expect(taskCount).to.be.equal(1);
     const tasks: Array<any> = await token.tasks(1);
 
-    expect(<BigNumber>tasks[0].toNumber()).to.equal(1);
+    expect(<BigNumber>tasks[0].toNumber()).to.equal(taskCount);
     expect(tasks[1]).to.equal("First task");
     expect(tasks[2]).to.be.false;
+  });
+
+  it("Should emit an event when deployed", async function () {
+    const {token} = await loadFixture(fixture);
+
+    expect(await token.createTask("Dummy text"))
+      .to.emit(token, "TaskCreated")
+      .withArgs(2, "Dummy text", false);
   });
 });
