@@ -13,8 +13,11 @@ contract TodoList {
     event TaskCreated(
         uint256 indexed id,
         string indexed content,
+        string nI_content,
         bool indexed completed
     );
+
+    event TaskUpdated(uint256 indexed id, bool completed);
 
     constructor() {
         createTask("First task");
@@ -28,6 +31,18 @@ contract TodoList {
             completed: false
         });
         Task memory newTask = tasks[taskCount];
-        emit TaskCreated(newTask.id, newTask.content, newTask.completed);
+        emit TaskCreated(
+            newTask.id,
+            newTask.content,
+            newTask.content,
+            newTask.completed
+        );
+    }
+
+    function toggleCompleted(uint256 _id) public {
+        Task memory _task = tasks[_id];
+        _task.completed = !_task.completed;
+        tasks[_id] = _task;
+        emit TaskUpdated(_id, tasks[_id].completed);
     }
 }

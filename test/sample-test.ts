@@ -71,17 +71,21 @@ describe.only("TodoList", function () {
     const eventLogs = await token.filters.TaskCreated(2, "Dummy text");
     const _eventLogs = await ethers.provider.getLogs(eventLogs);
 
-    // console.log(_eventLogs);
-
     const res = evIface.parseLog({
       topics: _eventLogs[0].topics,
       data: _eventLogs[0].data,
     });
 
-    console.log(res);
-
     expect(result)
       .to.emit(token, "TaskCreated")
       .withArgs(2, "Dummy text", false);
+  });
+
+  it("Updates tasks", async function () {
+    const {token} = await loadFixture(fixture);
+    await token.toggleCompleted(1);
+
+    const updatedTask: Array<any> = await token.tasks(1);
+    expect(updatedTask[2]).to.be.true;
   });
 });
