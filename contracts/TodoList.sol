@@ -10,7 +10,11 @@ contract TodoList {
     }
     mapping(uint256 => Task) public tasks;
 
-    event TaskCreated(uint256 id, string content, bool completed);
+    event TaskCreated(
+        uint256 indexed id,
+        string indexed content,
+        bool indexed completed
+    );
 
     constructor() {
         createTask("First task");

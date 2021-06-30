@@ -1,6 +1,6 @@
 import {expect, assert} from "chai";
 import {MockProvider} from "ethereum-waffle";
-import {BigNumber, Contract, ContractFactory, Wallet} from "ethers";
+import {BigNumber, Contract, Wallet} from "ethers";
 import {ethers, waffle} from "hardhat";
 const {loadFixture, deployContract} = waffle;
 
@@ -61,8 +61,26 @@ describe.only("TodoList", function () {
 
   it("Should emit an event when deployed", async function () {
     const {token} = await loadFixture(fixture);
+    const evABI = [
+      `event TaskCreated(uint256 indexed id, string indexed content, bool indexed completed)`,
+    ];
+    const evIface = new ethers.utils.Interface(evABI);
 
-    expect(await token.createTask("Dummy text"))
+    const result = await token.createTask("Dummy text");
+
+    const eventLogs = await token.filters.TaskCreated(2, "Dummy text");
+    const _eventLogs = await ethers.provider.getLogs(eventLogs);
+
+    // console.log(_eventLogs);
+
+    const res = evIface.parseLog({
+      topics: _eventLogs[0].topics,
+      data: _eventLogs[0].data,
+    });
+
+    console.log(res);
+
+    expect(result)
       .to.emit(token, "TaskCreated")
       .withArgs(2, "Dummy text", false);
   });
