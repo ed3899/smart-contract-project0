@@ -81,7 +81,7 @@ describe.only("TodoList", function () {
       .withArgs(2, "Dummy text", false);
   });
 
-  it("Updates tasks", async function () {
+  it("Toggles completed", async function () {
     const {token} = await loadFixture(fixture);
     await token.toggleCompleted(1);
 
