@@ -59,12 +59,12 @@ describe.only("TodoList", function () {
     expect(tasks[2]).to.be.false;
   });
 
-  it.only("Should emit an event when deployed", async function () {
+  it("Should emit an event when deployed", async function () {
     const {token} = await loadFixture(fixture);
     const evABI = [
-      `event TaskCreated(uint256 indexed id, string indexed content, bool indexed completed)`,
+      `event TaskCreated(uint256 indexed id, string indexed content, bool indexed completed, string nI_content)`,
     ];
-    const evIface = new ethers.utils.Interface(evABI);
+    const evIface = new ethers.utils.Interface(TodoListABI.abi);
 
     const result = await token.createTask("Dummy text");
 
@@ -78,7 +78,7 @@ describe.only("TodoList", function () {
 
     expect(result)
       .to.emit(token, "TaskCreated")
-      .withArgs(2, "Dummy text", "Dummy text", false);
+      .withArgs(2, "Dummy text", false, "Dummy text");
   });
 
   it("Toggles completed", async function () {

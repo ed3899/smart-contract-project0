@@ -13,8 +13,8 @@ contract TodoList {
     event TaskCreated(
         uint256 indexed id,
         string indexed content,
-        string nI_content,
-        bool indexed completed
+        bool indexed completed,
+        string nI_content
     );
 
     event TaskUpdated(uint256 indexed id, bool completed);
@@ -34,8 +34,8 @@ contract TodoList {
         emit TaskCreated(
             newTask.id,
             newTask.content,
-            newTask.content,
-            newTask.completed
+            newTask.completed,
+            newTask.content
         );
     }
 
